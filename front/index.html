@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru" class="theme-dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecipeBook</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./index.html">
+        <img
+          class="brand-mark"
+          src="./icons/brand.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <span class="brand-name">RecipeBook</span>
+      </a>
+
+      <button
+        id="themeToggle"
+        class="icon-btn icon-btn--theme"
+        type="button"
+        aria-label="Переключить тему"
+      >
+        <img
+          class="theme-icon-svg"
+          src="./icons/sun.svg"
+          data-theme-icon="sun"
+          alt=""
+          aria-hidden="true"
+        />
+        <img
+          class="theme-icon-svg"
+          src="./icons/moon.svg"
+          data-theme-icon="moon"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+    </header>
+
+    <main class="projects-main">
+      <section class="projects-header">
+        <div class="header-left">
+          <div>
+            <h1 class="title">Управление рецептами</h1>
+          </div>
+        </div>
+      </section>
+
+      <section class="auth">
+        <div class="card">
+          <h2 class="info-title">Продукты</h2>
+          <div style="margin-top: 16px">
+            <a class="btn primary" href="./pages/products/products.html"
+              >Открыть продукты</a
+            >
+          </div>
+        </div>
+
+        <div class="info">
+          <h2 class="info-title">Блюда</h2>
+          <div style="margin-top: 16px">
+            <a class="btn primary" href="./pages/dishes/dishes.html"
+              >Открыть блюда</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toastRoot" class="toast-root"></div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

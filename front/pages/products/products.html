@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ru" class="theme-dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Продукты — RecipeBook</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="../../index.html">
+        <img class="brand-mark" src="../../icons/brand.svg" alt="" aria-hidden="true" />
+        <span class="brand-name">RecipeBook</span>
+      </a>
+      <button
+        id="themeToggle"
+        class="icon-btn icon-btn--theme"
+        type="button"
+        aria-label="Переключить тему"
+      >
+        <img class="theme-icon-svg" src="../../icons/sun.svg" data-theme-icon="sun" alt="" aria-hidden="true" />
+        <img class="theme-icon-svg" src="../../icons/moon.svg" data-theme-icon="moon" alt="" aria-hidden="true" />
+      </button>
+    </header>
+
+    <main class="projects-main">
+      <div class="page-nav">
+        <span class="page-nav__tab is-active" aria-current="page"
+          >Продукты</span
+        >
+        <a class="page-nav__tab" href="../dishes/dishes.html">Блюда</a>
+      </div>
+
+      <section class="projects-header">
+        <div class="header-left">
+          <div>
+            <h1 class="title">Продукты</h1>
+          </div>
+        </div>
+        <button id="openCreateModalBtn" class="btn primary" type="button">
+          + Добавить продукт
+        </button>
+      </section>
+
+      <section class="card projects-card">
+        <div class="filter-grid">
+          <div class="field">
+            <label class="label" for="searchInput">Поиск по названию</label>
+            <input
+              id="searchInput"
+              class="input"
+              type="text"
+              placeholder="Например: рис"
+            />
+          </div>
+
+          <div class="field">
+            <label class="label" for="categoryFilter">Категория</label>
+            <select id="categoryFilter" class="select"></select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="readinessFilter">Готовность</label>
+            <select id="readinessFilter" class="select"></select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="sortBy">Сортировка</label>
+            <select id="sortBy" class="select"></select>
+          </div>
+        </div>
+
+        <div class="inline-actions" style="margin-bottom: 0">
+          <label class="badge"
+            ><input type="checkbox" id="flagVegan" /> Веган</label
+          >
+          <label class="badge"
+            ><input type="checkbox" id="flagGlutenFree" /> Без глютена</label
+          >
+          <label class="badge"
+            ><input type="checkbox" id="flagSugarFree" /> Без сахара</label
+          >
+        </div>
+      </section>
+
+      <section class="projects-list-section">
+        <div id="productsGrid" class="projects-grid"></div>
+      </section>
+    </main>
+
+    <div id="productFormModalHost"></div>
+
+    <div id="productDeleteModalBackdrop" class="modal-backdrop" hidden>
+      <div class="modal modal--view">
+        <h2 id="productDeleteModalTitle" class="modal-title">Удаление продукта</h2>
+        <div id="productDeleteModalText" class="dish-view-body"></div>
+        <ul id="productDeleteModalList" class="modal-note-list" hidden></ul>
+        <div class="modal-actions">
+          <button id="productDeleteCancelBtn" class="btn" type="button">
+            Отмена
+          </button>
+          <button
+            id="productDeleteConfirmBtn"
+            class="btn small danger"
+            type="button"
+          >
+            Удалить
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="productViewModalBackdrop" class="modal-backdrop" hidden>
+      <div class="modal modal--view">
+        <h2 id="productViewTitle" class="modal-title">Продукт</h2>
+        <div id="productViewBody" class="dish-view-body"></div>
+        <div class="modal-actions">
+          <button id="productViewCloseBtn" class="btn primary" type="button">
+            Закрыть
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastRoot" class="toast-root"></div>
+
+    <script src="../../script.js"></script>
+    <script src="../../photo-tiles.js"></script>
+    <script src="./product-dish-flag-sync.js"></script>
+    <script src="./product-form-modal.js"></script>
+    <script src="./product-form-modal-shared.js"></script>
+    <script src="./product-create-modal.js"></script>
+    <script src="./product-edit-modal.js"></script>
+    <script src="./product-view-modal.js"></script>
+    <script src="./products.js"></script>
+  </body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru" class="theme-dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Блюда — RecipeBook</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="../../index.html">
+        <img class="brand-mark" src="../../icons/brand.svg" alt="" aria-hidden="true" />
+        <span class="brand-name">RecipeBook</span>
+      </a>
+      <button
+        id="themeToggle"
+        class="icon-btn icon-btn--theme"
+        type="button"
+        aria-label="Переключить тему"
+      >
+        <img class="theme-icon-svg" src="../../icons/sun.svg" data-theme-icon="sun" alt="" aria-hidden="true" />
+        <img class="theme-icon-svg" src="../../icons/moon.svg" data-theme-icon="moon" alt="" aria-hidden="true" />
+      </button>
+    </header>
+
+    <main class="projects-main">
+      <div class="page-nav">
+        <a class="page-nav__tab" href="../products/products.html">Продукты</a>
+        <span class="page-nav__tab is-active" aria-current="page">Блюда</span>
+      </div>
+
+      <section class="projects-header">
+        <div class="header-left">
+          <div>
+            <h1 class="title">Блюда</h1>
+          </div>
+        </div>
+        <button id="openCreateDishModalBtn" class="btn primary" type="button">
+          + Добавить блюдо
+        </button>
+      </section>
+
+      <section class="card projects-card">
+        <div class="filter-grid">
+          <div class="field">
+            <label class="label" for="dishSearchInput">Поиск по названию</label>
+            <input
+              id="dishSearchInput"
+              class="input"
+              type="text"
+              placeholder="Например: суп"
+            />
+          </div>
+
+          <div class="field">
+            <label class="label" for="dishCategoryFilter">Категория</label>
+            <select id="dishCategoryFilter" class="select"></select>
+          </div>
+        </div>
+
+        <div class="inline-actions" style="margin-bottom: 0">
+          <label class="badge"
+            ><input type="checkbox" id="dishFlagVegan" /> Веган</label
+          >
+          <label class="badge"
+            ><input type="checkbox" id="dishFlagGlutenFree" /> Без
+            глютена</label
+          >
+          <label class="badge"
+            ><input type="checkbox" id="dishFlagSugarFree" /> Без сахара</label
+          >
+        </div>
+      </section>
+
+      <section class="projects-list-section">
+        <div id="dishesGrid" class="projects-grid"></div>
+      </section>
+    </main>
+
+    <div id="dishViewModalBackdrop" class="modal-backdrop" hidden>
+      <div class="modal modal--view">
+        <h2 id="dishViewTitle" class="modal-title">Блюдо</h2>
+        <div id="dishViewBody" class="dish-view-body"></div>
+        <div class="modal-actions">
+          <button id="dishViewCloseBtn" class="btn primary" type="button">
+            Закрыть
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="dishFormModalHost"></div>
+
+    <div id="dishDeleteModalBackdrop" class="modal-backdrop" hidden>
+      <div class="modal modal--view">
+        <h2 id="dishDeleteModalTitle" class="modal-title">Удаление блюда</h2>
+        <div id="dishDeleteModalText" class="dish-view-body"></div>
+        <div class="modal-actions">
+          <button id="dishDeleteCancelBtn" class="btn" type="button">
+            Отмена
+          </button>
+          <button
+            id="dishDeleteConfirmBtn"
+            class="btn small danger"
+            type="button"
+          >
+            Удалить
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastRoot" class="toast-root"></div>
+
+    <script src="../../script.js"></script>
+    <script src="../../photo-tiles.js"></script>
+    <script src="./dish-view-modal.js"></script>
+    <script src="./dish-form-modal.js"></script>
+    <script src="./dishes-photos.js"></script>
+    <script src="./dishes-nutrition.js"></script>
+    <script src="./dishes.js"></script>
+  </body>
+</html>
