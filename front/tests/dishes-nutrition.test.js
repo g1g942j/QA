@@ -41,6 +41,19 @@ describe("Подсчёт калорийности блюда", () => {
       expect(totals.calories).toBeCloseTo(expectedCalories, 5);
     });
 
+    test("Выбрасывает ошибку для смешанных типов ингредиентов", () => {
+      expect(() =>
+        calculateDishNutritionTotals(
+          [
+            { productId: 1, amount: 100 },
+            { productId: 2, amount: 50 },
+            { productId: 999, amount: 150 },
+          ],
+          resolveProductStub,
+        ),
+      ).toThrow("Ингредиент с id=999 не найден.");
+    });
+
     test("Выбрасывает ошибку для неизвестного ингредиента", () => {
       expect(() =>
         calculateDishNutritionTotals(
