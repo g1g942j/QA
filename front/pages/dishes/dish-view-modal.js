@@ -1,4 +1,11 @@
 (function () {
+  function formatDateTime(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString("ru-RU");
+  }
+
   function bindOnce() {
     const backdrop = document.getElementById("dishViewModalBackdrop");
     const closeBtn = document.getElementById("dishViewCloseBtn");
@@ -66,6 +73,10 @@
       "Флаги",
       flagLabels.length ? flagLabels.join(", ") : "нет",
     );
+    const createdAt = formatDateTime(dish.createAt || dish.createdAt);
+    const updatedAt = formatDateTime(dish.updateAt || dish.updatedAt);
+    if (createdAt) addRow("Создано", createdAt);
+    if (updatedAt) addRow("Изменено", updatedAt);
 
     const compSection = document.createElement("div");
     compSection.className = "dish-view-composition-wrap";

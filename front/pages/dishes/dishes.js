@@ -244,10 +244,7 @@ function openDishModal(dish = null) {
   dEls.dishFormFlagGlutenFree.checked = flags.includes("GLUTEN_FREE");
   dEls.dishFormFlagSugarFree.checked = flags.includes("SUGAR_FREE");
 
-  dishNutrition.validateDishFlagsAvailability();
-  if (!dish) {
-    dishNutrition.calculateNutrition();
-  }
+  dishNutrition.syncNutritionFromComposition();
   dEls.dishModalBackdrop.hidden = false;
 }
 
@@ -356,6 +353,10 @@ function renderDishes() {
     .join("");
 }
 
+function getCompositionTotalAmount(composition) {
+  return composition.reduce((total, item) => total + Number(item.amount || 0), 0);
+}
+
 async function persistDish() {
   dEls.dishFormError.textContent = "";
 
@@ -380,6 +381,12 @@ async function persistDish() {
   const portionSize = Number(dEls.portionSize.value);
   if (!(portionSize > 0)) {
     dEls.dishFormError.textContent = "Размер порции должен быть больше 0.";
+    return;
+  }
+  const compositionTotalAmount = getCompositionTotalAmount(composition);
+  if (portionSize < compositionTotalAmount) {
+    dEls.dishFormError.textContent =
+      `Размер порции не может быть меньше суммы ингредиентов (${compositionTotalAmount.toFixed(2)} г).`;
     return;
   }
 
