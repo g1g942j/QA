@@ -60,6 +60,13 @@
 
     function calculateNutrition() {
       const composition = getCompositionFromForm();
+      if (!composition.length) {
+        elements.dishCalories.value = "";
+        elements.dishProteins.value = "";
+        elements.dishFats.value = "";
+        elements.dishCarbs.value = "";
+        return;
+      }
       const totals = calculateDishNutritionTotals(composition, (productId) =>
         getProducts().find((p) => p.id === productId),
       );
