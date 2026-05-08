@@ -81,12 +81,11 @@
       const composition = getCompositionFromForm();
       const totalAmount = calculateCompositionTotalAmount(composition);
       const formattedTotal = totalAmount ? formatNutritionField(totalAmount) : "";
-      elements.portionSize.min = totalAmount > 0 ? formattedTotal : "0.01";
 
       const currentValue = Number(elements.portionSize.value);
       const hasCurrentValue = Number.isFinite(currentValue) && elements.portionSize.value !== "";
 
-      if (!hasCurrentValue || currentValue < totalAmount) {
+      if (!hasCurrentValue) {
         elements.portionSize.value = formattedTotal;
       }
     }
