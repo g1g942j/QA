@@ -18,10 +18,6 @@ describe("Подсчёт калорийности блюда", () => {
     );
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe("Эквивалентные классы", () => {
     test.each([
       {
