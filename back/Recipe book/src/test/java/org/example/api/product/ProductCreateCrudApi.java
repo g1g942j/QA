@@ -71,9 +71,14 @@ class ProductCreateCrudApi extends ProductApiSupport {
     @Nested
     @DisplayName("Название")
     class Name {
+        static Stream<Arguments> noName() {
+            return Stream.of(
+                    Arguments.of(CrudHttpVerb.POST),
+                    Arguments.of(CrudHttpVerb.PUT));
+        }
 
         @ParameterizedTest(name = "{0}")
-        @MethodSource("org.example.api.product.ProductCreateCrudApi#postAndPut")
+        @MethodSource("noName")
         void rejectsWhenNameMissing(CrudHttpVerb verb) {
             Long putId = putProductId(verb);
             Map<String, Object> body =
@@ -90,6 +95,12 @@ class ProductCreateCrudApi extends ProductApiSupport {
             ResponseEntity<String> r =
                     executeProduct(verb, putId, body, String.class);
             assertThat(r.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
+
+        static Stream<Arguments> nameOneCharCases() {
+            return Stream.of(
+                    Arguments.of(CrudHttpVerb.POST, "ф"),
+                    Arguments.of(CrudHttpVerb.PUT, "к"));
         }
 
         @ParameterizedTest(name = "{0} name={1}")
@@ -113,10 +124,10 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
 
-        static Stream<Arguments> nameOneCharCases() {
+        static Stream<Arguments> nameTwoCharsCases() {
             return Stream.of(
-                    Arguments.of(CrudHttpVerb.POST, "ф"),
-                    Arguments.of(CrudHttpVerb.PUT, "к"));
+                    Arguments.of(CrudHttpVerb.POST, "пр", HttpStatus.CREATED),
+                    Arguments.of(CrudHttpVerb.PUT, "ми", HttpStatus.OK));
         }
 
         @ParameterizedTest(name = "{0} -> {2}")
@@ -140,15 +151,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
                     executeProduct(verb, putId, body, ProductResponse.class);
             assertThat(r.getStatusCode()).isEqualTo(expected);
             assertThat(r.getBody().getName()).isEqualTo(name);
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
-        }
-
-        static Stream<Arguments> nameTwoCharsCases() {
-            return Stream.of(
-                    Arguments.of(CrudHttpVerb.POST, "пр", HttpStatus.CREATED),
-                    Arguments.of(CrudHttpVerb.PUT, "ми", HttpStatus.OK));
         }
     }
 
@@ -284,7 +286,7 @@ class ProductCreateCrudApi extends ProductApiSupport {
     }
 
     @Nested
-    @DisplayName("Текстовое поле composition")
+    @DisplayName("Состав (composition)")
     class Composition {
 
         @ParameterizedTest(name = "{0}")
@@ -308,9 +310,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getComposition()).isNull();
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -338,9 +337,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getComposition()).isEqualTo(text);
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
         }
     }
 
@@ -354,12 +350,12 @@ class ProductCreateCrudApi extends ProductApiSupport {
             Long putId = putProductId(verb);
             Map<String, Object> body =
                     productBody(
-                            unique("кат-" + verb + "-" + category),
+                            unique("категории-" + verb + "-" + category),
                             List.of(),
-                            verb == CrudHttpVerb.POST ? 20 : 30,
+                            30,
                             10,
-                            verb == CrudHttpVerb.POST ? 5 : 10,
-                            verb == CrudHttpVerb.POST ? 5 : 10,
+                            10,
+                            10,
                             null,
                             category,
                             DegreeReadiness.READY_TO_EAT.name(),
@@ -369,9 +365,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getCategory().name()).isEqualTo(category);
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
         }
     }
 
@@ -400,9 +393,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getDegreeReadiness()).isEqualTo(readiness);
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
         }
     }
 
@@ -432,9 +422,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getFlags()).containsExactlyInAnyOrderElementsOf(
                     Set.of(Flag.valueOf(flag)));
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -459,9 +446,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getFlags()).containsExactlyInAnyOrder(
                     Flag.VEGAN, Flag.GLUTEN_FREE, Flag.SUGAR_FREE);
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
         }
     }
 }
