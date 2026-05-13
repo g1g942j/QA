@@ -163,10 +163,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
         void acceptsZeroPhotos(CrudHttpVerb verb) {
             Long putId = putProductId(verb);
             Map<String, Object> body;
-            if (verb == CrudHttpVerb.POST) {
                 body =
                         productBody(
-                                unique("безФото"),
+                                unique("без фото"),
                                 List.of(),
                                 25,
                                 10,
@@ -176,28 +175,11 @@ class ProductCreateCrudApi extends ProductApiSupport {
                                 ProductCategory.CANNED.name(),
                                 DegreeReadiness.SEMI_FINISHED.name(),
                                 Set.of());
-            } else {
-                body =
-                        productBody(
-                                unique("обнФото0"),
-                                List.of(),
-                                15,
-                                10,
-                                10,
-                                10,
-                                null,
-                                ProductCategory.LIQUID.name(),
-                                DegreeReadiness.SEMI_FINISHED.name(),
-                                Set.of());
-            }
             ResponseEntity<ProductResponse> r =
                     executeProduct(verb, putId, body, ProductResponse.class);
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getPhotoKeys()).isEmpty();
-            if (verb == CrudHttpVerb.POST) {
-                trackProduct(r.getBody().getId());
-            }
         }
 
         @ParameterizedTest(name = "{0}")

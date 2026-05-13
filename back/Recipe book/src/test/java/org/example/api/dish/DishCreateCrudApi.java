@@ -168,10 +168,9 @@ class DishCreateCrudApi extends DishApiSupport {
                             ? createTrackedProduct(50, 5, 5, 5, DegreeReadiness.READY_TO_EAT)
                             : createTrackedProduct(10, 1, 1, 1, DegreeReadiness.READY_TO_EAT);
             Map<String, Object> body;
-            if (verb == CrudHttpVerb.POST) {
                 body =
                         dishBody(
-                                unique("безФото"),
+                                unique("без фото"),
                                 List.of(),
                                 null,
                                 null,
@@ -181,28 +180,11 @@ class DishCreateCrudApi extends DishApiSupport {
                                 80,
                                 "SOUP",
                                 Set.of());
-            } else {
-                body =
-                        dishBody(
-                                unique("обнФото0"),
-                                List.of(),
-                                null,
-                                null,
-                                null,
-                                null,
-                                List.of(ApiTestPayloads.compositionLine(pid, 10)),
-                                100,
-                                "SNACK",
-                                Set.of());
-            }
             ResponseEntity<DishResponse> r =
                     executeDish(verb, putId, body, DishResponse.class);
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getPhotoKeys()).isEmpty();
-            if (verb == CrudHttpVerb.POST) {
-                trackDish(r.getBody().getId());
-            }
         }
 
         @ParameterizedTest(name = "{0}")
