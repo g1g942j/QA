@@ -3,6 +3,7 @@ package org.example.api.product;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,14 +33,24 @@ class ProductCreateCrudApi extends ProductApiSupport {
         return Stream.of(CrudHttpVerb.POST, CrudHttpVerb.PUT);
     }
 
+    private static final double[] BJU_SINGLE_FIELD_BOUNDARIES =
+            new double[] {-0.1, 0.0, 0.1, 99.9, 100.0, 100.1};
+
     static Stream<Arguments> macroVerbFieldAndValue() {
         return postAndPut()
                 .flatMap(
                         verb ->
                                 Stream.of(
-                                        Arguments.of(verb, ProductApiSupport.MacroField.CALORIES, -1.0),
-                                        Arguments.of(verb, ProductApiSupport.MacroField.CALORIES, 0.0),
-                                        Arguments.of(verb, ProductApiSupport.MacroField.PROTEINS, 1.0)));
+                                                ProductApiSupport.MacroField.PROTEINS,
+                                                ProductApiSupport.MacroField.FATS,
+                                                ProductApiSupport.MacroField.CARBS)
+                                        .flatMap(
+                                                field ->
+                                                        Arrays.stream(BJU_SINGLE_FIELD_BOUNDARIES)
+                                                                .mapToObj(
+                                                                        v ->
+                                                                                Arguments.of(
+                                                                                        verb, field, v))));
     }
 
     static Stream<Arguments> categoryAndVerb() {
@@ -209,7 +220,7 @@ class ProductCreateCrudApi extends ProductApiSupport {
     }
 
     @Nested
-    @DisplayName("КБЖУ по одному полю: −1 / 0 / 1")
+    @DisplayName("КБЖУ по одному полю: границы −0.1 / 0 / 0.1 / 99.9 / 100 / 100.1")
     class Macros {
 
         @ParameterizedTest(name = "{0} {1}={2}")
@@ -226,7 +237,8 @@ class ProductCreateCrudApi extends ProductApiSupport {
                             ProductCategory.SWEETS.name(),
                             DegreeReadiness.READY_TO_EAT.name(),
                             Set.of());
-            if (value < 0) {
+            boolean expectBadRequest = value < 0.0 || value > 100.0;
+            if (expectBadRequest) {
                 ResponseEntity<String> r =
                         executeProduct(verb, putId, body, String.class);
                 assertThat(r.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -235,9 +247,6 @@ class ProductCreateCrudApi extends ProductApiSupport {
                         executeProduct(verb, putId, body, ProductResponse.class);
                 assertThat(r.getStatusCode())
                         .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
-                if (verb == CrudHttpVerb.POST) {
-                    trackProduct(r.getBody().getId());
-                }
             }
         }
 

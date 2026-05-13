@@ -103,15 +103,35 @@ public abstract class ProductApiSupport extends AbstractRecipeBookApi {
             String category,
             String degreeReadiness,
             Set<String> flags) {
-        double cal = 40.0;
-        double p = 15.0;
-        double fat = 15.0;
-        double carb = 15.0;
+        double cal = 0.0;
+        double p = 0.0;
+        double fat = 0.0;
+        double carb = 0.0;
         switch (field) {
-            case CALORIES -> cal = value;
-            case PROTEINS -> p = value;
-            case FATS -> fat = value;
-            case CARBS -> carb = value;
+            case CALORIES -> {
+                cal = value;
+                p = 15.0;
+                fat = 15.0;
+                carb = 15.0;
+            }
+            case PROTEINS -> {
+                cal = 40.0;
+                p = value;
+                fat = 0.0;
+                carb = 0.0;
+            }
+            case FATS -> {
+                cal = 40.0;
+                p = 0.0;
+                fat = value;
+                carb = 0.0;
+            }
+            case CARBS -> {
+                cal = 40.0;
+                p = 0.0;
+                fat = 0.0;
+                carb = value;
+            }
         }
         return productBody(name, photos, cal, p, fat, carb, composition, category, degreeReadiness, flags);
     }

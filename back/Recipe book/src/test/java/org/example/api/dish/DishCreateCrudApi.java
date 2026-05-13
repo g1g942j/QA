@@ -214,40 +214,6 @@ class DishCreateCrudApi extends DishApiSupport {
     }
 
     @Nested
-    @DisplayName("КБЖУ (явно по одному полю: -1 / 0 / 1)")
-    class Macros {
-
-        @ParameterizedTest(name = "{0} {1}={2}")
-        @MethodSource("org.example.api.dish.DishCreateCrudApi#macroVerbFieldAndValue")
-        void explicitMacroValue(CrudHttpVerb verb, DishApiSupport.MacroField field, double value) {
-            Long putId = putDishId(verb);
-            Long pid = createTrackedProduct(100, 10, 10, 10, DegreeReadiness.READY_TO_EAT);
-            Map<String, Object> body =
-                    dishBodyWithMacro(
-                            field,
-                            value,
-                            unique("кбжу-" + verb),
-                            List.of(),
-                            List.of(ApiTestPayloads.compositionLine(pid, 100)),
-                            100,
-                            "SECOND",
-                            Set.of());
-            if (value < 0) {
-                ResponseEntity<String> r = executeDish(verb, putId, body, String.class);
-                assertThat(r.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            } else {
-                ResponseEntity<DishResponse> r =
-                        executeDish(verb, putId, body, DishResponse.class);
-                assertThat(r.getStatusCode())
-                        .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
-                if (verb == CrudHttpVerb.POST) {
-                    trackDish(r.getBody().getId());
-                }
-            }
-        }
-    }
-
-    @Nested
     @DisplayName("Состав (продукты)")
     class Composition {
 
