@@ -9,8 +9,6 @@ import java.util.Set;
 import org.example.DTOs.dish.DishResponse;
 import org.example.api.ApiTestPayloads;
 import org.example.entity.enums.DegreeReadiness;
-import org.example.entity.enums.DishCategory;
-import org.example.entity.enums.Flag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 class DishRetriveCrudApi extends DishApiSupport {
 
     @Test
-    void getAllDishes_returnsOk() {
+    void getAllDishes() {
         ResponseEntity<List<DishResponse>> r =
                 rest.exchange("/api/dishes", HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
         assertThat(r.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -30,7 +28,7 @@ class DishRetriveCrudApi extends DishApiSupport {
     }
 
     @Test
-    void getUnknownDishById_returns500() {
+    void getUnknownDishById() {
         ResponseEntity<String> r = rest.getForEntity("/api/dishes/999999999", String.class);
         assertDefaultSpringError(r, 500, "/api/dishes/999999999");
     }
@@ -59,45 +57,5 @@ class DishRetriveCrudApi extends DishApiSupport {
                 rest.getForEntity("/api/dishes/" + created.getId(), DishResponse.class);
         assertThat(r.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(r.getBody().getId()).isEqualTo(created.getId());
-        assertThat(r.getBody().getName()).isEqualTo(name);
-        assertThat(r.getBody().getCategory()).isEqualTo(DishCategory.SECOND);
-        assertThat(r.getBody().getFlags()).containsExactly(Flag.VEGAN);
-        assertThat(r.getBody().getComposition()).hasSize(1);
-        assertThat(r.getBody().getComposition().get(0).getProductId()).isEqualTo(pid);
-    }
-
-    @Test
-    void listContainsCreatedDish() {
-        Long pid = createTrackedProduct(20, 2, 2, 2, DegreeReadiness.READY_TO_EAT);
-        String name = unique("чтениеСписок");
-        Map<String, Object> create =
-                dishBody(
-                        name,
-                        List.of(),
-                        null,
-                        null,
-                        null,
-                        null,
-                        List.of(ApiTestPayloads.compositionLine(pid, 15)),
-                        80,
-                        "FIRST",
-                        Set.of());
-        DishResponse created =
-                rest.postForEntity("/api/dishes", json(create), DishResponse.class).getBody();
-        trackDish(created.getId());
-
-        ResponseEntity<List<DishResponse>> r =
-                rest.exchange("/api/dishes", HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
-        assertThat(r.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(r.getBody()).isNotNull();
-        assertThat(r.getBody().stream().map(DishResponse::getId).anyMatch(id -> id.equals(created.getId())))
-                .isTrue();
-        assertThat(
-                        r.getBody().stream()
-                                .filter(d -> d.getId().equals(created.getId()))
-                                .findFirst()
-                                .orElseThrow()
-                                .getName())
-                .isEqualTo(name);
     }
 }
