@@ -81,19 +81,11 @@
       const composition = getCompositionFromForm();
       const totalAmount = calculateCompositionTotalAmount(composition);
       const formattedTotal = totalAmount ? formatNutritionField(totalAmount) : "";
-<<<<<<< HEAD
-=======
-      elements.portionSize.min = totalAmount > 0 ? formattedTotal : "0.01";
->>>>>>> 494dcc6d0d78bb5d1a20a05c35b3edff0526f0c9
 
       const currentValue = Number(elements.portionSize.value);
       const hasCurrentValue = Number.isFinite(currentValue) && elements.portionSize.value !== "";
 
-<<<<<<< HEAD
       if (!hasCurrentValue) {
-=======
-      if (!hasCurrentValue || currentValue < totalAmount) {
->>>>>>> 494dcc6d0d78bb5d1a20a05c35b3edff0526f0c9
         elements.portionSize.value = formattedTotal;
       }
     }
