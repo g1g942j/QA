@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "jest"
+    "unit-tests": "jest"
   },
   "devDependencies": {
     "jest": "^30.2.0"
