@@ -33,7 +33,6 @@ public abstract class ProductApiSupport extends AbstractRecipeBookApi {
     private static final double[] PRODUCT_BJU_OUT_OF_RANGE = {-0.1, 100.1};
     private static final double[] PRODUCT_BJU_IN_RANGE = {0.0, 0.1, 99.9, 100.0};
 
-    /** Источники аргументов для {@code @MethodSource} в тестах create/update. */
     public static Stream<Arguments> productMacroOutOfRange() {
         return Stream.of(MacroField.PROTEINS, MacroField.FATS, MacroField.CARBS)
                 .flatMap(
