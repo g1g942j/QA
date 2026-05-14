@@ -353,6 +353,10 @@ function renderDishes() {
     .join("");
 }
 
+function getCompositionTotalAmount(composition) {
+  return composition.reduce((total, item) => total + Number(item.amount || 0), 0);
+}
+
 async function persistDish() {
   dEls.dishFormError.textContent = "";
 
@@ -377,6 +381,12 @@ async function persistDish() {
   const portionSize = Number(dEls.portionSize.value);
   if (!Number.isFinite(portionSize)) {
     dEls.dishFormError.textContent = "Укажи размер порции.";
+    return;
+  }
+  const compositionTotalAmount = getCompositionTotalAmount(composition);
+  if (portionSize < compositionTotalAmount) {
+    dEls.dishFormError.textContent =
+      `Размер порции не может быть меньше суммы ингредиентов (${compositionTotalAmount.toFixed(2)} г).`;
     return;
   }
 
