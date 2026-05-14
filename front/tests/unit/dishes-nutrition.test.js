@@ -1,7 +1,7 @@
 const {
   calculateDishNutritionTotals,
   formatNutritionField,
-} = require("../pages/dishes/dishes-nutrition.js");
+} = require("../../pages/dishes/dishes-nutrition.js");
 
 describe("Подсчёт калорийности блюда", () => {
   let products;
