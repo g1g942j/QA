@@ -1,4 +1,11 @@
 (function () {
+  function formatDateTime(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString("ru-RU");
+  }
+
   function bindOnce() {
     const backdrop = document.getElementById("productViewModalBackdrop");
     const closeBtn = document.getElementById("productViewCloseBtn");
@@ -44,6 +51,10 @@
     const flags = mapFlags(product.flags || []);
     addRow("Флаги", flags.length ? flags.join(", ") : "не указаны");
     addRow("Состав", product.composition || "не указан");
+    const createdAt = formatDateTime(product.createAt || product.createdAt);
+    const updatedAt = formatDateTime(product.updateAt || product.updatedAt);
+    if (createdAt) addRow("Создано", createdAt);
+    if (updatedAt) addRow("Изменено", updatedAt);
 
     const photos = (product.photos || []).filter(Boolean);
     if (photos.length && window.RecipeBookPhotoTiles) {

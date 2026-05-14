@@ -244,10 +244,7 @@ function openDishModal(dish = null) {
   dEls.dishFormFlagGlutenFree.checked = flags.includes("GLUTEN_FREE");
   dEls.dishFormFlagSugarFree.checked = flags.includes("SUGAR_FREE");
 
-  dishNutrition.validateDishFlagsAvailability();
-  if (!dish) {
-    dishNutrition.calculateNutrition();
-  }
+  dishNutrition.syncNutritionFromComposition();
   dEls.dishModalBackdrop.hidden = false;
 }
 
@@ -378,8 +375,8 @@ async function persistDish() {
   }
 
   const portionSize = Number(dEls.portionSize.value);
-  if (!(portionSize > 0)) {
-    dEls.dishFormError.textContent = "Размер порции должен быть больше 0.";
+  if (!Number.isFinite(portionSize)) {
+    dEls.dishFormError.textContent = "Укажи размер порции.";
     return;
   }
 

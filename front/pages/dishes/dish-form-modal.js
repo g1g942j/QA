@@ -39,7 +39,7 @@
 
           <div class="field">
             <label class="label" for="portionSize">Размер порции (г)</label>
-            <input id="portionSize" class="input" type="number" min="0.01" step="0.01" required />
+            <input id="portionSize" class="input" type="number" step="0.01" required />
           </div>
 
           <div class="dish-macros-block">
@@ -62,7 +62,7 @@
               </div>
             </div>
             <p class="dish-macros-footnote muted">
-              КБЖУ на 100г считаются автоматически
+              КБЖУ на порцию считаются автоматически
             </p>
           </div>
 

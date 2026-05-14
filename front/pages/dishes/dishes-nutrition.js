@@ -1,16 +1,35 @@
 (function () {
+  function validateComposition(composition, resolveProduct) {
+    if (!Array.isArray(composition) || composition.length === 0) {
+      throw new Error("Состав блюда не может быть пустым.");
+    }
+
+    for (const item of composition) {
+      const amount = Number(item.amount);
+      if (!(amount > 0)) {
+        throw new Error("Количество ингредиента должно быть больше 0.");
+      }
+
+      const product = resolveProduct(item.productId);
+      if (!product) {
+        throw new Error(`Ингредиент с id=${item.productId} не найден.`);
+      }
+    }
+  }
+
   function calculateDishNutritionTotals(composition, resolveProduct) {
+    validateComposition(composition, resolveProduct);
     let calories = 0;
     let proteins = 0;
     let fats = 0;
     let carbs = 0;
     for (const item of composition) {
+      const amount = Number(item.amount);
       const product = resolveProduct(item.productId);
-      if (!product) continue;
-      calories += (Number(product.calories) * item.amount) / 100;
-      proteins += (Number(product.proteins) * item.amount) / 100;
-      fats += (Number(product.fats) * item.amount) / 100;
-      carbs += (Number(product.carbs) * item.amount) / 100;
+      calories += (Number(product.calories) * amount) / 100;
+      proteins += (Number(product.proteins) * amount) / 100;
+      fats += (Number(product.fats) * amount) / 100;
+      carbs += (Number(product.carbs) * amount) / 100;
     }
     return { calories, proteins, fats, carbs };
   }
@@ -18,6 +37,15 @@
   function formatNutritionField(value) {
     return value.toFixed(2);
   }
+
+  function calculateCompositionTotalAmount(composition) {
+    return composition.reduce((total, item) => total + Number(item.amount || 0), 0);
+  }
+
+  const nutritionTestApi = {
+    calculateDishNutritionTotals,
+    formatNutritionField,
+  };
 
   function create({ elements, getProducts }) {
     function getCompositionFromForm() {
@@ -32,6 +60,13 @@
 
     function calculateNutrition() {
       const composition = getCompositionFromForm();
+      if (!composition.length) {
+        elements.dishCalories.value = "";
+        elements.dishProteins.value = "";
+        elements.dishFats.value = "";
+        elements.dishCarbs.value = "";
+        return;
+      }
       const totals = calculateDishNutritionTotals(composition, (productId) =>
         getProducts().find((p) => p.id === productId),
       );
@@ -39,6 +74,20 @@
       elements.dishProteins.value = formatNutritionField(totals.proteins);
       elements.dishFats.value = formatNutritionField(totals.fats);
       elements.dishCarbs.value = formatNutritionField(totals.carbs);
+    }
+
+    function syncPortionSizeFromComposition() {
+      if (!elements.portionSize) return;
+      const composition = getCompositionFromForm();
+      const totalAmount = calculateCompositionTotalAmount(composition);
+      const formattedTotal = totalAmount ? formatNutritionField(totalAmount) : "";
+
+      const currentValue = Number(elements.portionSize.value);
+      const hasCurrentValue = Number.isFinite(currentValue) && elements.portionSize.value !== "";
+
+      if (!hasCurrentValue) {
+        elements.portionSize.value = formattedTotal;
+      }
     }
 
     function validateDishFlagsAvailability() {
@@ -64,6 +113,7 @@
     }
 
     function syncNutritionFromComposition() {
+      syncPortionSizeFromComposition();
       validateDishFlagsAvailability();
       calculateNutrition();
     }
@@ -132,11 +182,19 @@
       addIngredientRow,
       getCompositionFromForm,
       calculateNutrition,
+      syncPortionSizeFromComposition,
       validateDishFlagsAvailability,
       readDishFlagsFromForm,
       syncNutritionFromComposition,
     };
   }
 
-  window.RecipeBookDishNutrition = { create };
+  if (typeof window !== "undefined") {
+    window.RecipeBookDishNutrition = { create };
+    window.RecipeBookDishNutritionTestApi = nutritionTestApi;
+  }
+
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = nutritionTestApi;
+  }
 })();
