@@ -9,6 +9,7 @@ import java.util.Set;
 import org.example.DTOs.dish.DishResponse;
 import org.example.DTOs.product.ProductResponse;
 import org.example.api.ApiTestPayloads;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.example.entity.enums.DegreeReadiness;
 import org.example.entity.enums.ProductCategory;
 
+@DisplayName("Продукт: удаление (DELETE)")
 class ProductDeleteCrudApi extends ProductApiSupport {
 
     @Test

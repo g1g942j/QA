@@ -162,6 +162,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
                     executeProduct(verb, putId, body, ProductResponse.class);
             assertThat(r.getStatusCode()).isEqualTo(expected);
             assertThat(r.getBody().getName()).isEqualTo(name);
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
     }
 
@@ -191,6 +194,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getPhotoKeys()).isEmpty();
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -220,7 +226,7 @@ class ProductCreateCrudApi extends ProductApiSupport {
     }
 
     @Nested
-    @DisplayName("КБЖУ по одному полю: границы −0.1 / 0 / 0.1 / 99.9 / 100 / 100.1")
+    @DisplayName("КБЖУ по одному полю: границы 0.1 ниже нуля, 0, 0.1, 99.9, 100, 100.1 выше сотни")
     class Macros {
 
         @ParameterizedTest(name = "{0} {1}={2}")
@@ -247,6 +253,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
                         executeProduct(verb, putId, body, ProductResponse.class);
                 assertThat(r.getStatusCode())
                         .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
+                if (verb == CrudHttpVerb.POST) {
+                    trackProduct(r.getBody().getId());
+                }
             }
         }
 
@@ -301,6 +310,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getComposition()).isNull();
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -328,6 +340,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getComposition()).isEqualTo(text);
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
     }
 
@@ -356,6 +371,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getCategory().name()).isEqualTo(category);
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
     }
 
@@ -384,6 +402,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getDegreeReadiness()).isEqualTo(readiness);
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
     }
 
@@ -413,6 +434,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getFlags()).containsExactlyInAnyOrderElementsOf(
                     Set.of(Flag.valueOf(flag)));
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -437,6 +461,9 @@ class ProductCreateCrudApi extends ProductApiSupport {
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getFlags()).containsExactlyInAnyOrder(
                     Flag.VEGAN, Flag.GLUTEN_FREE, Flag.SUGAR_FREE);
+            if (verb == CrudHttpVerb.POST) {
+                trackProduct(r.getBody().getId());
+            }
         }
     }
 }

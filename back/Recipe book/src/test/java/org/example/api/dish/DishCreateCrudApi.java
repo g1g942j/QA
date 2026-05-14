@@ -185,6 +185,9 @@ class DishCreateCrudApi extends DishApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getPhotoKeys()).isEmpty();
+            if (verb == CrudHttpVerb.POST) {
+                trackDish(r.getBody().getId());
+            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -265,6 +268,9 @@ class DishCreateCrudApi extends DishApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getComposition()).hasSize(3);
+            if (verb == CrudHttpVerb.POST) {
+                trackDish(r.getBody().getId());
+            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -318,6 +324,9 @@ class DishCreateCrudApi extends DishApiSupport {
             assertThat(r.getStatusCode())
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getCategory().name()).isEqualTo(category);
+            if (verb == CrudHttpVerb.POST) {
+                trackDish(r.getBody().getId());
+            }
         }
     }
 
@@ -348,6 +357,9 @@ class DishCreateCrudApi extends DishApiSupport {
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getFlags()).containsExactlyInAnyOrderElementsOf(
                     Set.of(Flag.valueOf(flag)));
+            if (verb == CrudHttpVerb.POST) {
+                trackDish(r.getBody().getId());
+            }
         }
 
         @ParameterizedTest(name = "{0}")
@@ -373,6 +385,9 @@ class DishCreateCrudApi extends DishApiSupport {
                     .isEqualTo(verb == CrudHttpVerb.POST ? HttpStatus.CREATED : HttpStatus.OK);
             assertThat(r.getBody().getFlags()).containsExactlyInAnyOrder(
                     Flag.VEGAN, Flag.GLUTEN_FREE, Flag.SUGAR_FREE);
+            if (verb == CrudHttpVerb.POST) {
+                trackDish(r.getBody().getId());
+            }
         }
     }
 }
