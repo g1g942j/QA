@@ -4,18 +4,19 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.example.DTOs.dish.DishPhotoUploadResponse;
 import org.example.DTOs.dish.DishResponse;
 import org.example.DTOs.product.ProductResponse;
 import org.example.api.AbstractRecipeBookApi;
-import org.example.api.CrudHttpVerb;
 import org.example.api.ApiTestPayloads;
 import org.example.entity.enums.DegreeReadiness;
+import org.example.entity.enums.DishCategory;
 import org.example.entity.enums.ProductCategory;
+import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +32,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public abstract class DishApiSupport extends AbstractRecipeBookApi {
 
     protected static final long UNKNOWN_PRODUCT_ID = 999_999_999L;
+
+    public static Stream<Arguments> dishCategorySamples() {
+        return Stream.of(
+                        DishCategory.SECOND.name(),
+                        DishCategory.DESSERT.name(),
+                        DishCategory.SOUP.name())
+                .map(Arguments::of);
+    }
+
+    public static Stream<Arguments> dishFlagSamples() {
+        return Stream.of("VEGAN", "GLUTEN_FREE").map(Arguments::of);
+    }
 
     protected String unique(String prefix) {
         return prefix + "-" + UUID.randomUUID().toString().substring(0, 8);
@@ -55,16 +68,12 @@ public abstract class DishApiSupport extends AbstractRecipeBookApi {
         return id;
     }
 
-    protected <T> ResponseEntity<T> executeDish(
-            CrudHttpVerb verb, Long putResourceId, Map<String, Object> body, Class<T> responseType) {
-        if (verb == CrudHttpVerb.POST) {
-            return rest.postForEntity("/api/dishes", json(body), responseType);
-        }
-        return rest.exchange(
-                "/api/dishes/" + Objects.requireNonNull(putResourceId, "putResourceId"),
-                HttpMethod.PUT,
-                json(body),
-                responseType);
+    protected <T> ResponseEntity<T> postDish(Map<String, Object> body, Class<T> responseType) {
+        return rest.postForEntity("/api/dishes", json(body), responseType);
+    }
+
+    protected <T> ResponseEntity<T> putDish(long id, Map<String, Object> body, Class<T> responseType) {
+        return rest.exchange("/api/dishes/" + id, HttpMethod.PUT, json(body), responseType);
     }
 
     protected Long createBaseDish() {

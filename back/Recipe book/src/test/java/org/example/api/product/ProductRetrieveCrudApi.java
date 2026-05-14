@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.example.DTOs.product.ProductResponse;
+import org.example.entity.enums.DegreeReadiness;
+import org.example.entity.enums.ProductCategory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,11 +16,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.example.entity.enums.DegreeReadiness;
-import org.example.entity.enums.ProductCategory;
-
-@DisplayName("Продукт: получение списка и по id (GET)")
-class ProductRetriveCrudApi extends ProductApiSupport {
+@DisplayName("Продукт: retrieve (GET)")
+class ProductRetrieveCrudApi extends ProductApiSupport {
 
     @Test
     void getAllProducts() {

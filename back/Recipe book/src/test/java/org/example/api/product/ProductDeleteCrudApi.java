@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.example.entity.enums.DegreeReadiness;
 import org.example.entity.enums.ProductCategory;
 
-@DisplayName("Продукт: удаление (DELETE)")
+@DisplayName("Продукт: delete (DELETE)")
 class ProductDeleteCrudApi extends ProductApiSupport {
 
     @Test

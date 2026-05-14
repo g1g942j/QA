@@ -16,8 +16,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@DisplayName("Блюдо: получение списка и по id (GET)")
-class DishRetriveCrudApi extends DishApiSupport {
+@DisplayName("Блюдо: retrieve (GET)")
+class DishRetrieveCrudApi extends DishApiSupport {
 
     @Test
     void getAllDishes() {

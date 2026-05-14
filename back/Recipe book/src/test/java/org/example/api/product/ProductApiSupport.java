@@ -1,20 +1,21 @@
 package org.example.api.product;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.example.DTOs.product.ProductPhotoUploadResponse;
 import org.example.DTOs.product.ProductResponse;
 import org.example.api.AbstractRecipeBookApi;
-import org.example.api.CrudHttpVerb;
 import org.example.api.ApiTestPayloads;
 import org.example.entity.enums.DegreeReadiness;
 import org.example.entity.enums.ProductCategory;
+import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,43 @@ import org.springframework.util.MultiValueMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class ProductApiSupport extends AbstractRecipeBookApi {
+
+    private static final double[] PRODUCT_BJU_OUT_OF_RANGE = {-0.1, 100.1};
+    private static final double[] PRODUCT_BJU_IN_RANGE = {0.0, 0.1, 99.9, 100.0};
+
+    /** Источники аргументов для {@code @MethodSource} в тестах create/update. */
+    public static Stream<Arguments> productMacroOutOfRange() {
+        return Stream.of(MacroField.PROTEINS, MacroField.FATS, MacroField.CARBS)
+                .flatMap(
+                        field ->
+                                Arrays.stream(PRODUCT_BJU_OUT_OF_RANGE)
+                                        .mapToObj(v -> Arguments.of(field, v)));
+    }
+
+    public static Stream<Arguments> productMacroInRange() {
+        return Stream.of(MacroField.PROTEINS, MacroField.FATS, MacroField.CARBS)
+                .flatMap(
+                        field ->
+                                Arrays.stream(PRODUCT_BJU_IN_RANGE)
+                                        .mapToObj(v -> Arguments.of(field, v)));
+    }
+
+    public static Stream<Arguments> productCategorySamples() {
+        return Stream.of(
+                        ProductCategory.MEAT.name(),
+                        ProductCategory.SWEETS.name(),
+                        ProductCategory.LIQUID.name())
+                .map(Arguments::of);
+    }
+
+    public static Stream<Arguments> productDegreeSamples() {
+        return Stream.of(DegreeReadiness.READY_TO_EAT, DegreeReadiness.REQUIRES_COOKING)
+                .map(Arguments::of);
+    }
+
+    public static Stream<Arguments> productFlagSamples() {
+        return Stream.of("VEGAN", "GLUTEN_FREE").map(Arguments::of);
+    }
 
     protected String unique(String prefix) {
         return prefix + "-" + UUID.randomUUID().toString().substring(0, 8);
@@ -184,16 +222,12 @@ public abstract class ProductApiSupport extends AbstractRecipeBookApi {
         return id;
     }
 
-    protected <T> ResponseEntity<T> executeProduct(
-            CrudHttpVerb verb, Long putResourceId, Map<String, Object> body, Class<T> responseType) {
-        if (verb == CrudHttpVerb.POST) {
-            return rest.postForEntity("/api/products", json(body), responseType);
-        }
-        return rest.exchange(
-                "/api/products/" + Objects.requireNonNull(putResourceId, "putResourceId"),
-                HttpMethod.PUT,
-                json(body),
-                responseType);
+    protected <T> ResponseEntity<T> postProduct(Map<String, Object> body, Class<T> responseType) {
+        return rest.postForEntity("/api/products", json(body), responseType);
+    }
+
+    protected <T> ResponseEntity<T> putProduct(long id, Map<String, Object> body, Class<T> responseType) {
+        return rest.exchange("/api/products/" + id, HttpMethod.PUT, json(body), responseType);
     }
 
     protected Long createStandaloneProductInDishBlocked(String nameSuffix) {

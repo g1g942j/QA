@@ -14,7 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@DisplayName("Блюдо: удаление (DELETE)")
+@DisplayName("Блюдо: delete (DELETE)")
 class DishDeleteCrudApi extends DishApiSupport {
 
     @Test
