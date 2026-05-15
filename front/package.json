@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "unit-tests": "jest"
+    "test": "npm run ui-tests",
+    "unit-tests": "jest",
+    "ui-tests": "start-server-and-test \"npx --yes serve . -l 52900 --no-port-switching\" http://127.0.0.1:52900/index.html \"mocha --config .mocharc.cjs\""
   },
   "devDependencies": {
-    "jest": "^30.2.0"
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.0",
+    "jest": "^30.2.0",
+    "mocha": "^11.0.1",
+    "selenium-webdriver": "^4.27.1",
+    "start-server-and-test": "^2.0.10",
+    "tsx": "^4.19.2"
   }
 }
