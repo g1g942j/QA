@@ -11,7 +11,15 @@
 
           <div class="field">
             <label class="label" for="name">Название</label>
-            <input id="name" class="input" type="text" required minlength="2" />
+            <input
+              id="name"
+              class="input"
+              type="text"
+              name="productName"
+              autocomplete="off"
+              required
+              minlength="2"
+            />
           </div>
 
           <div class="field">

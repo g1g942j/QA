@@ -113,6 +113,13 @@
 
     <div id="toastRoot" class="toast-root"></div>
 
+    <script>
+      (function () {
+        if (String(window.RECIPE_BOOK_API_ORIGIN || "").trim()) return;
+        window.RECIPE_BOOK_API_ORIGIN = "http://localhost:8080";
+      })();
+    </script>
+
     <script src="../../script.js"></script>
     <script src="../../photo-tiles.js"></script>
     <script src="./dish-view-modal.js"></script>
