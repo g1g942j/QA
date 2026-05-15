@@ -55,6 +55,17 @@ export class ProductsPage {
     );
   }
 
+  async searchByName(name: string): Promise<void> {
+    const search = await this.searchInput();
+    await search.clear();
+    await search.sendKeys(name);
+    await this.driver.executeScript(`
+      const el = document.getElementById("searchInput");
+      if (!el) throw new Error("searchInput missing");
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    `);
+  }
+
   async resetListFilters(): Promise<void> {
     const search = await this.searchInput();
     await search.clear();

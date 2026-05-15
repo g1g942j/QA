@@ -55,6 +55,17 @@ export class DishesPage {
     );
   }
 
+  async searchByName(name: string): Promise<void> {
+    const search = await this.searchInput();
+    await search.clear();
+    await search.sendKeys(name);
+    await this.driver.executeScript(`
+      const el = document.getElementById("dishSearchInput");
+      if (!el) throw new Error("dishSearchInput missing");
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    `);
+  }
+
   async resetListFilters(): Promise<void> {
     const search = await this.searchInput();
     await search.clear();
