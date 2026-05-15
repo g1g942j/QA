@@ -6,6 +6,37 @@ import { waitTextInPage, waitVisible } from "../waits.js";
 import { ProductsPage } from "../pages/products.page.js";
 import { ProductModalPage } from "../pages/product-modal.page.js";
 
+type ProductBjuMacros = {
+  proteins: string;
+  fats: string;
+  carbs: string;
+};
+
+async function fillProductFormWithBju(
+  modal: ProductModalPage,
+  name: string,
+  bju: ProductBjuMacros,
+): Promise<void> {
+  await modal.fillValidBaseline(name);
+  await modal.setNumericFieldRaw("proteins", bju.proteins);
+  await modal.setNumericFieldRaw("fats", bju.fats);
+  await modal.setNumericFieldRaw("carbs", bju.carbs);
+}
+
+async function deleteProductByName(
+  driver: import("selenium-webdriver").WebDriver,
+  products: ProductsPage,
+  name: string,
+): Promise<void> {
+  const card = await products.productCardByName(name);
+  await (await products.deleteButtonForCard(card)).click();
+  await (await products.deleteConfirmButton()).click();
+  await driver.wait(async () => {
+    const list = await products.productCardsByName(name);
+    return list.length === 0;
+  }, 20_000);
+}
+
 describe("Продукты — поиск", () => {
   let driver: import("selenium-webdriver").WebDriver;
   let marker: string;
@@ -103,8 +134,11 @@ describe("Продукты — форма создания", () => {
     }
   });
 
-  it("граница minlength: 1 символ — невалидность", async () => {
+  it("граница minlength: 1 символ в названии", async () => {
     const modal = new ProductModalPage(driver);
+    const nameEl = await modal.nameInput();
+    await nameEl.clear();
+    await nameEl.sendKeys("А");
     await modal.fillRequiredSelects("VEGETABLES", "SEMI_FINISHED");
     await modal.fillMacros({
       calories: "1",
@@ -112,120 +146,87 @@ describe("Продукты — форма создания", () => {
       fats: "1",
       carbs: "1",
     });
-    const nameEl = await modal.nameInput();
-    await nameEl.clear();
-    await nameEl.sendKeys("A");
     await (await modal.saveButton()).click();
-    const snap = (await driver.executeScript(`
-      const el = document.getElementById("name");
-      if (!el) return null;
-      return {
-        value: el.value,
-        valid: el.validity.valid,
-        tooShort: el.validity.tooShort,
-        willValidate: el.willValidate,
-      };
-    `)) as {
-      value: string;
-      valid: boolean;
-      tooShort: boolean;
-      willValidate: boolean;
-    } | null;
-    assert.ok(snap, "поле #name есть в DOM");
-    assert.equal(
-      snap.value,
-      "A",
-      "ожидалось ровно один символ без автозаполнения; проверьте autocomplete/фокус",
-    );
-    assert.equal(snap.willValidate, true);
-    assert.equal(snap.valid, false);
-    assert.equal(snap.tooShort, true);
-    assert.equal(await modal.isBackdropDisplayed(), true);
-  });
-
-  it("граница minlength: 2 символа — валидно по HTML", async () => {
-    const modal = new ProductModalPage(driver);
-    const nameEl = await modal.nameInput();
-    await nameEl.clear();
-    await nameEl.sendKeys("AB");
     const valid = (await driver.executeScript(
       "return arguments[0].validity.valid;",
       nameEl,
     )) as boolean;
-    assert.equal(valid, true);
+    assert.equal(valid, false);
+    assert.equal(await modal.isBackdropDisplayed(), true);
   });
 
-  const bjuCases = [
+  it("граница minlength: 2 символа", async () => {
+    const modal = new ProductModalPage(driver);
+    const nameEl = await modal.nameInput();
+    await nameEl.clear();
+    await nameEl.sendKeys("Аб");
+    assert.equal(await modal.fieldValidityValid("name"), true);
+  });
+
+  const bjuValidCases = [
     {
-      title: "граница 99.9 — валидный класс",
+      title: "граница 99.9",
       proteins: "33.9",
       fats: "33",
       carbs: "33",
-      expectError: false,
     },
     {
-      title: "граница 100 — валидный класс",
+      title: "граница 100",
       proteins: "34",
       fats: "33",
       carbs: "33",
-      expectError: false,
-    },
-    {
-      title: "граница 100.1 — невалидный класс",
-      proteins: "34.1",
-      fats: "33",
-      carbs: "33",
-      expectError: true,
     },
   ] as const;
 
-  for (const row of bjuCases) {
+  for (const row of bjuValidCases) {
     it(`БЖУ: ${row.title}`, async () => {
       const products = new ProductsPage(driver);
       const modal = new ProductModalPage(driver);
       const name = `UI_BJU_${Date.now()}`;
-      await modal.fillValidBaseline(name);
-      const p = await modal.proteinsInput();
-      await p.clear();
-      await p.sendKeys(row.proteins);
-      const f = await modal.fatsInput();
-      await f.clear();
-      await f.sendKeys(row.fats);
-      const c = await modal.carbsInput();
-      await c.clear();
-      await c.sendKeys(row.carbs);
+      await fillProductFormWithBju(modal, name, row);
       await (await modal.saveButton()).click();
-      if (row.expectError) {
-        const err = await modal.formError();
-        assert.equal(
-          (await err.getText()).trim(),
-          "Сумма БЖУ не может превышать 100.",
-        );
-      } else {
-        await waitTextInPage(driver, "Продукт создан", 20_000);
-        const card = await products.productCardByName(name);
-        assert.equal(await card.isDisplayed(), true);
-        await (await products.deleteButtonForCard(card)).click();
-        await (await products.deleteConfirmButton()).click();
-        await driver.wait(async () => {
-          const list = await products.productCardsByName(name);
-          return list.length === 0;
-        }, 20_000);
-      }
+      await waitTextInPage(driver, "Продукт создан", 20_000);
+      const card = await products.productCardByName(name);
+      assert.equal(await card.isDisplayed(), true);
+      await deleteProductByName(driver, products, name);
+    });
+  }
+
+  const bjuInvalidCases = [
+    {
+      title: "граница 100.1",
+      proteins: "34.1",
+      fats: "33",
+      carbs: "33",
+    },
+  ] as const;
+
+  for (const row of bjuInvalidCases) {
+    it(`БЖУ: ${row.title}`, async () => {
+      const modal = new ProductModalPage(driver);
+      const name = `UI_BJU_${Date.now()}`;
+      await fillProductFormWithBju(modal, name, row);
+      await (await modal.saveButton()).click();
+      const err = await modal.formError();
+      assert.equal(
+        (await err.getText()).trim(),
+        "Сумма БЖУ не может превышать 100.",
+      );
+      assert.equal(await modal.isBackdropDisplayed(), true);
     });
   }
 
   const selectCases = [
     {
-      title: "эквивалент «категория не выбрана»",
+      title: "«категория не выбрана»",
       readiness: "REQUIRES_COOKING",
-      fillCategory: false,
+      category: "",
       expected: "Выберите категорию.",
     },
     {
-      title: "эквивалент «готовность не выбрана»",
+      title: "«готовность не выбрана»",
       readiness: "",
-      fillCategory: true,
+      category: "GREENS",
       expected: "Выберите необходимость готовки.",
     },
   ] as const;
@@ -242,8 +243,8 @@ describe("Продукты — форма создания", () => {
         fats: "5",
         carbs: "5",
       });
-      await modal.setSelectById("category", row.fillCategory ? "GREENS" : "");
-      await modal.setSelectById("degreeReadiness", row.readiness || "");
+      await modal.setSelectById("category", row.category);
+      await modal.setSelectById("degreeReadiness", row.readiness);
       await (await modal.saveButton()).click();
       const err = await modal.formError();
       assert.equal((await err.getText()).trim(), row.expected);

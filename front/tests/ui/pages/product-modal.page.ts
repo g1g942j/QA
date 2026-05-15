@@ -174,7 +174,7 @@ export class ProductModalPage {
   }
 
   async fieldValidityValid(
-    id: "calories" | "proteins" | "fats" | "carbs",
+    id: "name" | "calories" | "proteins" | "fats" | "carbs",
   ): Promise<boolean> {
     return (await this.driver.executeScript(
       `return document.getElementById(arguments[0]).validity.valid;`,
