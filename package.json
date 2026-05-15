@@ -1,0 +1,9 @@
+{
+  "name": "recipe-book",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "tests": "npm run unit-tests --prefix front  && npm run test:back && npm run ui-tests --prefix front",
+    "test:back": "mvn -f \"back/Recipe book/pom.xml\" test"
+  }
+}
