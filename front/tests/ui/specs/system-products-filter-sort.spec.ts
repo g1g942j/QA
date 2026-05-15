@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "mocha";
-import { By, WebDriver } from "selenium-webdriver";
+import { WebDriver } from "selenium-webdriver";
 import { createDriver } from "../driver-factory.js";
-import { waitTextInPage, waitVisible } from "../waits.js";
+import { waitTextInPage } from "../waits.js";
 import { ProductsPage } from "../pages/products.page.js";
 import { ProductModalPage } from "../pages/product-modal.page.js";
 import { deleteProductsByNameSubstring } from "../test-data/api-cleanup.js";
@@ -18,8 +18,7 @@ async function createProduct(
   vegan = false,
 ): Promise<void> {
   await products.goto();
-  await (await products.openCreateButton()).click();
-  await waitVisible(driver, By.id("productModalBackdrop"));
+  await products.openCreateModal();
   const nameEl = await modal.nameInput();
   await nameEl.clear();
   await nameEl.sendKeys(name);
@@ -85,13 +84,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
 
     await products.setListSelect("categoryFilter", "SWEETS");
     let titles = await products.productCardTitles();
@@ -142,13 +135,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
 
     await products.setListSelect("readinessFilter", "REQUIRES_COOKING");
     let titles = await products.productCardTitles();
@@ -200,13 +187,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
 
     await products.setListFlagCheckbox("flagVegan", true);
     const titles = await products.productCardTitles();
@@ -251,13 +232,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
     await products.setListSelect("sortBy", "name");
 
     const titles = await products.productCardTitles();
@@ -303,13 +278,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
     await products.setListSelect("sortBy", "calories");
 
     const titles = await products.productCardTitles();
@@ -355,13 +324,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
     await products.setListSelect("sortBy", "proteins");
 
     const titles = await products.productCardTitles();
@@ -407,13 +370,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
     await products.setListSelect("sortBy", "fats");
 
     const titles = await products.productCardTitles();
@@ -459,13 +416,7 @@ describe("Продукты — фильтры и сортировка", () => {
 
     await products.goto();
     await products.resetListFilters();
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await products.searchByName(marker);
     await products.setListSelect("sortBy", "carbs");
 
     const titles = await products.productCardTitles();

@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, beforeEach, describe, it } from "mocha";
-import { By } from "selenium-webdriver";
 import { createDriver } from "../driver-factory.js";
-import { waitTextInPage, waitVisible } from "../waits.js";
+import { waitTextInPage } from "../waits.js";
 import { ProductsPage } from "../pages/products.page.js";
 import { ProductModalPage } from "../pages/product-modal.page.js";
 
@@ -57,8 +56,7 @@ describe("Продукты — поиск", () => {
     const products = new ProductsPage(driver);
     const modal = new ProductModalPage(driver);
     await products.goto();
-    await (await products.openCreateButton()).click();
-    await waitVisible(driver, By.id("productModalBackdrop"));
+    await products.openCreateModal();
     await modal.fillValidBaseline(uniqueName);
     await (await modal.saveButton()).click();
     await waitTextInPage(driver, "Продукт создан", 20_000);
@@ -121,8 +119,7 @@ describe("Продукты — форма создания", () => {
   beforeEach(async () => {
     const products = new ProductsPage(driver);
     await products.goto();
-    await (await products.openCreateButton()).click();
-    await waitVisible(driver, By.id("productModalBackdrop"));
+    await products.openCreateModal();
   });
 
   afterEach(async () => {
@@ -147,11 +144,7 @@ describe("Продукты — форма создания", () => {
       carbs: "1",
     });
     await (await modal.saveButton()).click();
-    const valid = (await driver.executeScript(
-      "return arguments[0].validity.valid;",
-      nameEl,
-    )) as boolean;
-    assert.equal(valid, false);
+    assert.equal(await modal.fieldValidityValid("name"), false);
     assert.equal(await modal.isBackdropDisplayed(), true);
   });
 

@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, beforeEach, describe, it } from "mocha";
-import { By } from "selenium-webdriver";
 import { createDriver } from "../driver-factory.js";
-import { waitTextInPage, waitVisible } from "../waits.js";
+import { waitTextInPage } from "../waits.js";
 import { ProductsPage } from "../pages/products.page.js";
 import { ProductModalPage } from "../pages/product-modal.page.js";
 
@@ -21,8 +20,7 @@ describe("Продукты — калории: граница 0", () => {
   beforeEach(async () => {
     const products = new ProductsPage(driver);
     await products.goto();
-    await (await products.openCreateButton()).click();
-    await waitVisible(driver, By.id("productModalBackdrop"));
+    await products.openCreateModal();
   });
 
   afterEach(async () => {
@@ -77,8 +75,7 @@ describe("Продукты — БЖУ: границы по одному полю
   beforeEach(async () => {
     const products = new ProductsPage(driver);
     await products.goto();
-    await (await products.openCreateButton()).click();
-    await waitVisible(driver, By.id("productModalBackdrop"));
+    await products.openCreateModal();
   });
 
   afterEach(async () => {
@@ -146,8 +143,7 @@ describe("Продукты — сумма БЖУ", () => {
   beforeEach(async () => {
     const products = new ProductsPage(driver);
     await products.goto();
-    await (await products.openCreateButton()).click();
-    await waitVisible(driver, By.id("productModalBackdrop"));
+    await products.openCreateModal();
   });
 
   afterEach(async () => {

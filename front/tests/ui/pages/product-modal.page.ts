@@ -33,6 +33,10 @@ export class ProductModalPage {
     return waitVisible(this.driver, By.id("productModalBackdrop"));
   }
 
+  async waitOpen(): Promise<void> {
+    await this.backdrop();
+  }
+
   async nameInput() {
     return waitVisible(this.driver, By.id("name"));
   }

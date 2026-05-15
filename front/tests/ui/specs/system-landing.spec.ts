@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
-import { after, afterEach, before, beforeEach, describe, it } from "mocha";
-import { By } from "selenium-webdriver";
-import { getBaseUrl } from "../base-url.js";
+import { after, before, beforeEach, describe, it } from "mocha";
 import { createDriver } from "../driver-factory.js";
-import { waitVisible } from "../waits.js";
+import { getBaseUrl } from "../base-url.js";
 import { HomePage } from "../pages/home.page.js";
 import { ProductsPage } from "../pages/products.page.js";
+import { DishesPage } from "../pages/dishes.page.js";
 
 describe("Система RecipeBook — главная и навигация", () => {
   let driver: import("selenium-webdriver").WebDriver;
@@ -36,18 +35,15 @@ describe("Система RecipeBook — главная и навигация", (
     const products = new ProductsPage(driver);
     await (await home.openProductsLink()).click();
     assert.equal(await (await products.title()).isDisplayed(), true);
-    await (await waitVisible(driver, By.css("a.brand"))).click();
+    await products.clickBrand();
     assert.equal(await (await home.heading()).isDisplayed(), true);
   });
 
   it("переход на страницу блюд", async () => {
     const home = new HomePage(driver);
+    const dishes = new DishesPage(driver);
     await (await home.openDishesLink()).click();
-    const h = await waitVisible(
-      driver,
-      By.xpath(`//h1[normalize-space(.)="Блюда"]`),
-    );
-    assert.equal(await h.isDisplayed(), true);
+    assert.equal(await (await dishes.title()).isDisplayed(), true);
   });
 });
 
@@ -65,19 +61,14 @@ describe("Система RecipeBook — переключатель темы", ()
 
   beforeEach(async () => {
     await driver.get(`${getBaseUrl()}/index.html`);
-    await driver.executeScript("localStorage.removeItem('recipebook-theme');");
-    await driver.navigate().refresh();
+    await new HomePage(driver).resetThemePreference();
   });
 
   it("клик по переключателю меняет класс темы", async () => {
     const home = new HomePage(driver);
-    const before = (await driver.executeScript(
-      `return document.documentElement.classList.contains('theme-light') ? 'light' : 'dark';`,
-    )) as string;
+    const before = await home.currentTheme();
     await (await home.themeToggle()).click();
-    const after = (await driver.executeScript(
-      `return document.documentElement.classList.contains('theme-light') ? 'light' : 'dark';`,
-    )) as string;
+    const after = await home.currentTheme();
     assert.notEqual(after, before);
   });
 });

@@ -34,6 +34,10 @@ export class DishModalPage {
     return waitVisible(this.driver, By.id("dishModalBackdrop"));
   }
 
+  async waitOpen(): Promise<void> {
+    await this.backdrop();
+  }
+
   async nameInput() {
     return waitVisible(this.driver, By.id("dishName"));
   }

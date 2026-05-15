@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "mocha";
-import { By, WebDriver } from "selenium-webdriver";
+import { WebDriver } from "selenium-webdriver";
 import { createDriver } from "../driver-factory.js";
-import { waitTextInPage, waitVisible } from "../waits.js";
+import { waitTextInPage } from "../waits.js";
 import { DishesPage } from "../pages/dishes.page.js";
 import { DishModalPage } from "../pages/dish-modal.page.js";
 import {
@@ -25,8 +25,7 @@ async function createDish(
   setVeganFlag = false,
 ): Promise<void> {
   await dishes.goto();
-  await (await dishes.openCreateButton()).click();
-  await waitVisible(driver, By.id("dishModalBackdrop"));
+  await dishes.openCreateModal();
   await modal.fillMinimalSavable(name, category, "100", productId);
   if (setVeganFlag) await modal.setDishFormFlagVegan(true);
   await (await modal.saveButton()).click();
@@ -68,14 +67,7 @@ describe("Блюда — фильтры и порядок по названию"
     await createDish(driver, dishes, modal, nameA, "FIRST", seeded.id);
 
     await dishes.goto();
-    await dishes.resetListFilters();
-    const search = await dishes.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("dishSearchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await dishes.searchByName(marker);
 
     const titles = await dishes.dishCardTitles();
     const mine = titles.filter((t) => t.includes(marker));
@@ -94,13 +86,7 @@ describe("Блюда — фильтры и порядок по названию"
 
     await dishes.goto();
     await dishes.resetListFilters();
-    const search = await dishes.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("dishSearchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await dishes.searchByName(marker);
 
     await dishes.setListSelect("dishCategoryFilter", "SOUP");
     let titles = await dishes.dishCardTitles();
@@ -125,13 +111,7 @@ describe("Блюда — фильтры и порядок по названию"
 
     await dishes.goto();
     await dishes.resetListFilters();
-    const search = await dishes.searchInput();
-    await search.clear();
-    await search.sendKeys(marker);
-    await driver.executeScript(`
-      const el = document.getElementById("dishSearchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await dishes.searchByName(marker);
 
     await dishes.setListFlagCheckbox("dishFlagVegan", true);
     const titles = await dishes.dishCardTitles();

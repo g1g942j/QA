@@ -36,4 +36,17 @@ export class HomePage {
       By.css("#themeToggle"),
     );
   }
+
+  async currentTheme(): Promise<"light" | "dark"> {
+    return (await this.driver.executeScript(
+      `return document.documentElement.classList.contains('theme-light') ? 'light' : 'dark';`,
+    )) as "light" | "dark";
+  }
+
+  async resetThemePreference(): Promise<void> {
+    await this.driver.executeScript(
+      "localStorage.removeItem('recipebook-theme');",
+    );
+    await this.driver.navigate().refresh();
+  }
 }

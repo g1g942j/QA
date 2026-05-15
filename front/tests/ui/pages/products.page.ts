@@ -23,6 +23,19 @@ export class ProductsPage {
     );
   }
 
+  async openCreateModal(): Promise<void> {
+    await (await this.openCreateButton()).click();
+    await waitVisible(this.driver, By.id("productModalBackdrop"));
+  }
+
+  async brandLink() {
+    return waitVisible(this.driver, By.css("a.brand"));
+  }
+
+  async clickBrand(): Promise<void> {
+    await (await this.brandLink()).click();
+  }
+
   async searchInput() {
     return waitVisible(this.driver, By.id("searchInput"));
   }
@@ -151,6 +164,16 @@ export class ProductsPage {
   async clickProductDeleteModalCancel(): Promise<void> {
     const btn = await waitVisible(this.driver, By.id("productDeleteCancelBtn"));
     await btn.click();
+  }
+
+  async productDeleteModalDishNames(): Promise<string[]> {
+    await this.waitProductDeleteModal();
+    const raw = (await this.driver.executeScript(
+      `return [...document.querySelectorAll('#productDeleteModalList li')]
+        .map((el) => (el.textContent || '').trim())
+        .filter(Boolean);`,
+    )) as unknown;
+    return Array.isArray(raw) ? (raw as string[]) : [];
   }
 
   async waitProductViewModal(): Promise<void> {

@@ -23,6 +23,11 @@ export class DishesPage {
     );
   }
 
+  async openCreateModal(): Promise<void> {
+    await (await this.openCreateButton()).click();
+    await waitVisible(this.driver, By.id("dishModalBackdrop"));
+  }
+
   async searchInput() {
     return waitVisible(this.driver, By.id("dishSearchInput"));
   }

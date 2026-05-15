@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, beforeEach, describe, it } from "mocha";
-import { By } from "selenium-webdriver";
 import { createDriver } from "../driver-factory.js";
-import { waitTextInPage, waitVisible } from "../waits.js";
+import { waitTextInPage } from "../waits.js";
 import { DishesPage } from "../pages/dishes.page.js";
 import { DishModalPage } from "../pages/dish-modal.page.js";
 import {
@@ -37,8 +36,7 @@ describe("Блюда — UI", () => {
       const dishes = new DishesPage(driver);
       const modal = new DishModalPage(driver);
       await dishes.goto();
-      await (await dishes.openCreateButton()).click();
-      await waitVisible(driver, By.id("dishModalBackdrop"));
+      await dishes.openCreateModal();
       await modal.fillMinimalSavable(uniqueName, "FIRST", "100", seeded.id);
       await (await modal.saveButton()).click();
       await waitTextInPage(driver, "Блюдо создано", 25_000);
@@ -90,8 +88,7 @@ describe("Блюда — UI", () => {
     beforeEach(async () => {
       const dishes = new DishesPage(driver);
       await dishes.goto();
-      await (await dishes.openCreateButton()).click();
-      await waitVisible(driver, By.id("dishModalBackdrop"));
+      await dishes.openCreateModal();
     });
 
     afterEach(async () => {
@@ -111,11 +108,7 @@ describe("Блюда — UI", () => {
       await modal.setSelectById("dishCategory", "SOUP");
       await modal.fillIngredientByProductId(seeded.id, "50");
       await (await modal.saveButton()).click();
-      const valid = (await driver.executeScript(
-        "return arguments[0].validity.valid;",
-        nameEl,
-      )) as boolean;
-      assert.equal(valid, false);
+      assert.equal(await modal.fieldValidityValid("dishName"), false);
       assert.equal(await modal.isBackdropDisplayed(), true);
     });
 

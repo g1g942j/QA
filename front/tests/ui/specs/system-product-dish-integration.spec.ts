@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "mocha";
-import { By, WebDriver } from "selenium-webdriver";
+import { WebDriver } from "selenium-webdriver";
 import { createDriver } from "../driver-factory.js";
-import { waitTextInPage, waitVisible } from "../waits.js";
+import { waitTextInPage } from "../waits.js";
 import { ProductsPage } from "../pages/products.page.js";
 import { ProductModalPage } from "../pages/product-modal.page.js";
 import { DishesPage } from "../pages/dishes.page.js";
@@ -73,8 +73,7 @@ describe("Продукты и блюда — связка", () => {
     const dishes = new DishesPage(driver);
     const dishModal = new DishModalPage(driver);
     await dishes.goto();
-    await (await dishes.openCreateButton()).click();
-    await waitVisible(driver, By.id("dishModalBackdrop"));
+    await dishes.openCreateModal();
     await dishModal.fillMinimalSavable(dishName, "SOUP", "100", productId);
     await (await dishModal.saveButton()).click();
     await waitTextInPage(driver, "Блюдо создано", 25_000);
@@ -88,12 +87,8 @@ describe("Продукты и блюда — связка", () => {
     const title = await products.productDeleteModalTitleText();
     assert.ok(title.includes("нельзя удалить"));
     assert.equal(await products.productDeleteConfirmButtonHidden(), true);
-    const listItems = await driver.findElements(
-      By.css("#productDeleteModalList li"),
-    );
-    assert.ok(listItems.length >= 1);
-    const names: string[] = [];
-    for (const li of listItems) names.push((await li.getText()).trim());
+    const names = await products.productDeleteModalDishNames();
+    assert.ok(names.length >= 1);
     assert.ok(names.some((n) => n.includes(dishName)));
     await products.clickProductDeleteModalCancel();
   });
@@ -130,8 +125,7 @@ describe("Продукты и блюда — связка", () => {
     const dishes = new DishesPage(driver);
     const dishModal = new DishModalPage(driver);
     await dishes.goto();
-    await (await dishes.openCreateButton()).click();
-    await waitVisible(driver, By.id("dishModalBackdrop"));
+    await dishes.openCreateModal();
     await dishModal.fillMinimalSavable(dishName, "FIRST", "50", beet.id);
     await dishModal.addSecondIngredient(meat.id, "50");
     try {
@@ -156,20 +150,13 @@ describe("Продукты и блюда — связка", () => {
     await products.goto();
     const meatCard = await products.productCardByName(meatName);
     await (await products.editButtonForCard(meatCard)).click();
-    await waitVisible(driver, By.id("productModalBackdrop"));
+    await productModal.waitOpen();
     await productModal.setFormFlagVegan(false);
     await (await productModal.saveButton()).click();
     await waitTextInPage(driver, "Продукт обновлён", 25_000);
 
     await dishes.goto();
-    await dishes.resetListFilters();
-    const s2 = await dishes.searchInput();
-    await s2.clear();
-    await s2.sendKeys(dishName);
-    await driver.executeScript(`
-      const el = document.getElementById("dishSearchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
+    await dishes.searchByName(dishName);
     const cardAfter = await dishes.dishCardByName(dishName);
     assert.equal((await cardAfter.getText()).includes("Веган"), false);
   });
