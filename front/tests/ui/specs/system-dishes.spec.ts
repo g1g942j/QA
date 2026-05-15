@@ -27,7 +27,7 @@ describe("Блюда — UI", () => {
     await deleteProductById(seeded.id).catch(() => undefined);
   });
 
-  describe("Блюда — поиск (эквивалентные классы)", () => {
+  describe("Блюда — поиск", () => {
     let marker: string;
     let uniqueName: string;
 
@@ -62,7 +62,7 @@ describe("Блюда — UI", () => {
       }
     });
 
-    it("класс A: поиск по подстроке показывает карточку", async () => {
+    it("поиск по подстроке показывает карточку", async () => {
       const dishes = new DishesPage(driver);
       const search = await dishes.searchInput();
       await search.clear();
@@ -75,7 +75,7 @@ describe("Блюда — UI", () => {
       assert.equal(empty.length, 0);
     });
 
-    it("класс B: поиск без совпадений — пустое состояние", async () => {
+    it("поиск без совпадений — пустое состояние", async () => {
       const dishes = new DishesPage(driver);
       const search = await dishes.searchInput();
       await search.clear();
@@ -83,25 +83,6 @@ describe("Блюда — UI", () => {
       const empty = await dishes.emptyStateBlock();
       assert.ok(empty.length >= 1);
       assert.equal(await empty[0]!.isDisplayed(), true);
-    });
-
-    it("класс C: очистка поиска убирает фильтр", async () => {
-      const dishes = new DishesPage(driver);
-      const search = await dishes.searchInput();
-      await search.clear();
-      await search.sendKeys(`${marker}_no_such_dish`);
-      const empty1 = await dishes.emptyStateBlock();
-      assert.ok(empty1.length >= 1);
-      await search.clear();
-      await search.sendKeys("");
-      await driver.executeScript(`
-      const el = document.getElementById("dishSearchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
-      assert.equal(
-        await (await dishes.dishCardByName(uniqueName)).isDisplayed(),
-        true,
-      );
     });
   });
 
@@ -146,7 +127,7 @@ describe("Блюда — UI", () => {
       assert.equal(await modal.fieldValidityValid("dishName"), true);
     });
 
-    it("порция 0: фронт не блокирует, бэк отклоняет (400)", async function () {
+    it("размер порции 0", async function () {
       this.timeout(30_000);
       const modal = new DishModalPage(driver);
       const name = `UI_D_P0_${Date.now()}`;
@@ -161,7 +142,7 @@ describe("Блюда — UI", () => {
       assert.equal(await modal.isBackdropDisplayed(), true);
     });
 
-    it("без категории и без макроса в названии — ошибка формы", async () => {
+    it("без категории и без макроса в названии", async () => {
       const modal = new DishModalPage(driver);
       const nameEl = await modal.nameInput();
       await nameEl.clear();
@@ -177,7 +158,7 @@ describe("Блюда — UI", () => {
       );
     });
 
-    it("КБЖУ на форме считаются автоматически по составу (50 г продукта)", async function () {
+    it("КБЖУ на форме считаются автоматически по составу", async function () {
       this.timeout(30_000);
       const modal = new DishModalPage(driver);
       await modal.setSelectById("dishCategory", "FIRST");

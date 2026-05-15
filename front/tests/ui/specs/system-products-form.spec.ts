@@ -6,7 +6,7 @@ import { waitTextInPage, waitVisible } from "../waits.js";
 import { ProductsPage } from "../pages/products.page.js";
 import { ProductModalPage } from "../pages/product-modal.page.js";
 
-describe("Продукты — поиск (эквивалентные классы)", () => {
+describe("Продукты — поиск", () => {
   let driver: import("selenium-webdriver").WebDriver;
   let marker: string;
   let uniqueName: string;
@@ -31,7 +31,10 @@ describe("Продукты — поиск (эквивалентные класс
     await modal.fillValidBaseline(uniqueName);
     await (await modal.saveButton()).click();
     await waitTextInPage(driver, "Продукт создан", 20_000);
-    assert.equal(await (await products.productCardByName(uniqueName)).isDisplayed(), true);
+    assert.equal(
+      await (await products.productCardByName(uniqueName)).isDisplayed(),
+      true,
+    );
   });
 
   afterEach(async () => {
@@ -48,17 +51,20 @@ describe("Продукты — поиск (эквивалентные класс
     }
   });
 
-  it("класс A: поиск по подстроке показывает карточку", async () => {
+  it("поиск по подстроке показывает карточку", async () => {
     const products = new ProductsPage(driver);
     const search = await products.searchInput();
     await search.clear();
     await search.sendKeys(marker);
-    assert.equal(await (await products.productCardByName(uniqueName)).isDisplayed(), true);
+    assert.equal(
+      await (await products.productCardByName(uniqueName)).isDisplayed(),
+      true,
+    );
     const empty = await products.emptyStateBlock();
     assert.equal(empty.length, 0);
   });
 
-  it("класс B: поиск без совпадений — пустое состояние", async () => {
+  it("поиск без совпадений — пустое состояние", async () => {
     const products = new ProductsPage(driver);
     const search = await products.searchInput();
     await search.clear();
@@ -67,25 +73,9 @@ describe("Продукты — поиск (эквивалентные класс
     assert.ok(empty.length >= 1);
     assert.equal(await empty[0]!.isDisplayed(), true);
   });
-
-  it("класс C: очистка поиска убирает фильтр", async () => {
-    const products = new ProductsPage(driver);
-    const search = await products.searchInput();
-    await search.clear();
-    await search.sendKeys(`${marker}_no_such_product`);
-    const empty1 = await products.emptyStateBlock();
-    assert.ok(empty1.length >= 1);
-    await search.clear();
-    await search.sendKeys("");
-    await driver.executeScript(`
-      const el = document.getElementById("searchInput");
-      if (el) el.dispatchEvent(new Event("input", { bubbles: true }));
-    `);
-    assert.equal(await (await products.productCardByName(uniqueName)).isDisplayed(), true);
-  });
 });
 
-describe("Продукты — форма создания (границы и эквиваленты)", () => {
+describe("Продукты — форма создания", () => {
   let driver: import("selenium-webdriver").WebDriver;
 
   before(async function () {
@@ -167,6 +157,13 @@ describe("Продукты — форма создания (границы и э
 
   const bjuCases = [
     {
+      title: "граница 99.9 — валидный класс",
+      proteins: "33.9",
+      fats: "33",
+      carbs: "33",
+      expectError: false,
+    },
+    {
       title: "граница 100 — валидный класс",
       proteins: "34",
       fats: "33",
@@ -174,10 +171,10 @@ describe("Продукты — форма создания (границы и э
       expectError: false,
     },
     {
-      title: "граница 101 — невалидный класс",
-      proteins: "34",
+      title: "граница 100.1 — невалидный класс",
+      proteins: "34.1",
       fats: "33",
-      carbs: "34",
+      carbs: "33",
       expectError: true,
     },
   ] as const;

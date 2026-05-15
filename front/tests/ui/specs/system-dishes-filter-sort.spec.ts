@@ -59,7 +59,7 @@ describe("Блюда — фильтры и порядок по названию"
     await deleteDishesByNameSubstring(marker);
   });
 
-  it("карточки отсортированы по названию (locale ru)", async () => {
+  it("карточки отсортированы по названию", async () => {
     const dishes = new DishesPage(driver);
     const modal = new DishModalPage(driver);
     const nameZ = `${marker}_zzz_sort`;

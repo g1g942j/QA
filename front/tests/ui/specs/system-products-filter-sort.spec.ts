@@ -54,18 +54,34 @@ describe("Продукты — фильтры и сортировка", () => {
     const modal = new ProductModalPage(driver);
     const nameMeat = `${marker}_meat_row`;
     const nameSweets = `${marker}_sweets_row`;
-    await createProduct(driver, products, modal, nameMeat, "MEAT", "READY_TO_EAT", {
-      calories: "80",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
-    await createProduct(driver, products, modal, nameSweets, "SWEETS", "READY_TO_EAT", {
-      calories: "90",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameMeat,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "80",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameSweets,
+      "SWEETS",
+      "READY_TO_EAT",
+      {
+        calories: "90",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
 
     await products.goto();
     await products.resetListFilters();
@@ -95,18 +111,34 @@ describe("Продукты — фильтры и сортировка", () => {
     const modal = new ProductModalPage(driver);
     const nameReady = `${marker}_ready_row`;
     const nameCook = `${marker}_cook_row`;
-    await createProduct(driver, products, modal, nameReady, "GRAINS", "READY_TO_EAT", {
-      calories: "70",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
-    await createProduct(driver, products, modal, nameCook, "GRAINS", "REQUIRES_COOKING", {
-      calories: "71",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameReady,
+      "GRAINS",
+      "READY_TO_EAT",
+      {
+        calories: "70",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameCook,
+      "GRAINS",
+      "REQUIRES_COOKING",
+      {
+        calories: "71",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
 
     await products.goto();
     await products.resetListFilters();
@@ -136,12 +168,20 @@ describe("Продукты — фильтры и сортировка", () => {
     const modal = new ProductModalPage(driver);
     const nameNorm = `${marker}_norm_veg`;
     const nameVeg = `${marker}_veg_veg`;
-    await createProduct(driver, products, modal, nameNorm, "MEAT", "READY_TO_EAT", {
-      calories: "60",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameNorm,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "60",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
     await createProduct(
       driver,
       products,
@@ -175,23 +215,39 @@ describe("Продукты — фильтры и сортировка", () => {
     assert.ok(mine[0]!.includes("veg_veg"));
   });
 
-  it("сортировка по названию (locale ru)", async () => {
+  it("сортировка по названию", async () => {
     const products = new ProductsPage(driver);
     const modal = new ProductModalPage(driver);
     const nameZ = `${marker}_zzz_sort`;
     const nameA = `${marker}_aaa_sort`;
-    await createProduct(driver, products, modal, nameZ, "MEAT", "READY_TO_EAT", {
-      calories: "50",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
-    await createProduct(driver, products, modal, nameA, "MEAT", "READY_TO_EAT", {
-      calories: "51",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameZ,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "50",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameA,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "51",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
 
     await products.goto();
     await products.resetListFilters();
@@ -211,23 +267,39 @@ describe("Продукты — фильтры и сортировка", () => {
     assert.ok(mine[1]!.includes("zzz"));
   });
 
-  it("сортировка по калорийности: по убыванию", async () => {
+  it("сортировка по калорийности", async () => {
     const products = new ProductsPage(driver);
     const modal = new ProductModalPage(driver);
     const nameLow = `${marker}_cal_low`;
     const nameHigh = `${marker}_cal_high`;
-    await createProduct(driver, products, modal, nameLow, "MEAT", "READY_TO_EAT", {
-      calories: "10",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
-    await createProduct(driver, products, modal, nameHigh, "MEAT", "READY_TO_EAT", {
-      calories: "500",
-      proteins: "10",
-      fats: "10",
-      carbs: "10",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameLow,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "10",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameHigh,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "500",
+        proteins: "10",
+        fats: "10",
+        carbs: "10",
+      },
+    );
 
     await products.goto();
     await products.resetListFilters();
@@ -247,23 +319,39 @@ describe("Продукты — фильтры и сортировка", () => {
     assert.ok(mine[1]!.includes("low"));
   });
 
-  it("сортировка по белкам: по убыванию", async () => {
+  it("сортировка по белкам", async () => {
     const products = new ProductsPage(driver);
     const modal = new ProductModalPage(driver);
     const nameLow = `${marker}_prot_low`;
     const nameHigh = `${marker}_prot_high`;
-    await createProduct(driver, products, modal, nameLow, "MEAT", "READY_TO_EAT", {
-      calories: "100",
-      proteins: "5",
-      fats: "10",
-      carbs: "10",
-    });
-    await createProduct(driver, products, modal, nameHigh, "MEAT", "READY_TO_EAT", {
-      calories: "100",
-      proteins: "90",
-      fats: "5",
-      carbs: "5",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameLow,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "100",
+        proteins: "5",
+        fats: "10",
+        carbs: "10",
+      },
+    );
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameHigh,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "100",
+        proteins: "90",
+        fats: "5",
+        carbs: "5",
+      },
+    );
 
     await products.goto();
     await products.resetListFilters();
@@ -283,23 +371,39 @@ describe("Продукты — фильтры и сортировка", () => {
     assert.ok(mine[1]!.includes("low"));
   });
 
-  it("сортировка по жирам: по убыванию", async () => {
+  it("сортировка по жирам", async () => {
     const products = new ProductsPage(driver);
     const modal = new ProductModalPage(driver);
     const nameLow = `${marker}_fat_low`;
     const nameHigh = `${marker}_fat_high`;
-    await createProduct(driver, products, modal, nameLow, "MEAT", "READY_TO_EAT", {
-      calories: "100",
-      proteins: "10",
-      fats: "5",
-      carbs: "10",
-    });
-    await createProduct(driver, products, modal, nameHigh, "MEAT", "READY_TO_EAT", {
-      calories: "100",
-      proteins: "5",
-      fats: "90",
-      carbs: "5",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameLow,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "100",
+        proteins: "10",
+        fats: "5",
+        carbs: "10",
+      },
+    );
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameHigh,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "100",
+        proteins: "5",
+        fats: "90",
+        carbs: "5",
+      },
+    );
 
     await products.goto();
     await products.resetListFilters();
@@ -319,23 +423,39 @@ describe("Продукты — фильтры и сортировка", () => {
     assert.ok(mine[1]!.includes("low"));
   });
 
-  it("сортировка по углеводам: по убыванию", async () => {
+  it("сортировка по углеводам", async () => {
     const products = new ProductsPage(driver);
     const modal = new ProductModalPage(driver);
     const nameLow = `${marker}_carb_low`;
     const nameHigh = `${marker}_carb_high`;
-    await createProduct(driver, products, modal, nameLow, "MEAT", "READY_TO_EAT", {
-      calories: "100",
-      proteins: "10",
-      fats: "10",
-      carbs: "5",
-    });
-    await createProduct(driver, products, modal, nameHigh, "MEAT", "READY_TO_EAT", {
-      calories: "100",
-      proteins: "5",
-      fats: "5",
-      carbs: "90",
-    });
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameLow,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "100",
+        proteins: "10",
+        fats: "10",
+        carbs: "5",
+      },
+    );
+    await createProduct(
+      driver,
+      products,
+      modal,
+      nameHigh,
+      "MEAT",
+      "READY_TO_EAT",
+      {
+        calories: "100",
+        proteins: "5",
+        fats: "5",
+        carbs: "90",
+      },
+    );
 
     await products.goto();
     await products.resetListFilters();

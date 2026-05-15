@@ -65,21 +65,8 @@ describe("Система RecipeBook — переключатель темы", ()
 
   beforeEach(async () => {
     await driver.get(`${getBaseUrl()}/index.html`);
-    await driver.executeScript(
-      "localStorage.removeItem('recipebook-theme');",
-    );
+    await driver.executeScript("localStorage.removeItem('recipebook-theme');");
     await driver.navigate().refresh();
-  });
-
-  afterEach(async () => {
-    try {
-      const url = await driver.getCurrentUrl();
-      if (url.startsWith("http")) {
-        await driver.executeScript(
-          "localStorage.removeItem('recipebook-theme');",
-        );
-      }
-    } catch {}
   });
 
   it("клик по переключателю меняет класс темы", async () => {
